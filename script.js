@@ -26,7 +26,7 @@ async function generarCodigoPedido(){
     return `ME-${String(numero).padStart(3, "0")}`;
 }
 
-document.getElementById("pedidoForm").addEventListener("submit", async function(e) {
+document.getElementById("pedidoForm").addEventListener("submit", async function(e){
 
     e.preventDefault();
 
@@ -76,14 +76,14 @@ document.getElementById("pedidoForm").addEventListener("submit", async function(
         mensaje += `💵 Pago: ${pago}%0A%0A`;
         mensaje += `📸 Si adjuntó una foto, por favor enviarla en este chat.`;
 
-        alert(`✅ Pedido guardado correctamente. Código: ${codigoPedido}`);
-
-        window.open(
-            `https://wa.me/593995494655?text=${mensaje}`,
-            "_blank"
+        alert(
+            `✅ Pedido registrado correctamente.\n\nCódigo de seguimiento: ${codigoPedido}`
         );
 
         document.getElementById("pedidoForm").reset();
+
+        window.location.href =
+        `https://wa.me/593995494655?text=${mensaje}`;
 
     } catch (error) {
 
