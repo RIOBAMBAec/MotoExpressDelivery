@@ -429,3 +429,22 @@ footer{
         min-width:160px;
     }
 }
+.botones-inicio{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
+    margin-top:20px;
+}
+
+.btn-seguimiento{
+    background:transparent;
+    border:2px solid #FFD700;
+    color:#FFD700;
+}
+
+.btn-seguimiento:hover{
+    background:#FFD700;
+    color:#000;
+}
