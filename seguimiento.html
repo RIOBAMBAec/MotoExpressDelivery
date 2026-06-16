@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seguimiento - Moto Express</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family:Arial, sans-serif;
+            background:#111;
+            color:white;
+            min-height:100vh;
+        }
+
+        .contenedor{
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            padding:30px;
+            background:
+            linear-gradient(rgba(0,0,0,.82), rgba(0,0,0,.82)),
+            url("img/delivery.jpg");
+            background-size:cover;
+            background-position:center;
+        }
+
+        .card{
+            width:100%;
+            max-width:520px;
+            background:#1c1c1c;
+            border:1px solid #FFD700;
+            border-radius:20px;
+            padding:30px;
+            text-align:center;
+            box-shadow:0 0 25px rgba(255,215,0,.15);
+        }
+
+        .card img{
+            width:90px;
+            margin-bottom:15px;
+        }
+
+        h1{
+            color:#FFD700;
+            margin-bottom:15px;
+        }
+
+        p{
+            color:#ddd;
+            margin-bottom:20px;
+        }
+
+        input{
+            width:100%;
+            padding:15px;
+            border:none;
+            border-radius:10px;
+            font-size:18px;
+            text-align:center;
+            margin-bottom:15px;
+            text-transform:uppercase;
+        }
+
+        button{
+            width:100%;
+            padding:15px;
+            background:#FFD700;
+            color:#000;
+            border:none;
+            border-radius:10px;
+            font-size:18px;
+            font-weight:bold;
+            cursor:pointer;
+            transition:.3s;
+        }
+
+        button:hover{
+            background:#FFC107;
+            transform:scale(1.02);
+        }
+
+        .resultado{
+            margin-top:25px;
+            text-align:left;
+            background:#111;
+            border-radius:15px;
+            padding:20px;
+            border:1px solid #333;
+            display:none;
+        }
+
+        .resultado h2{
+            color:#FFC107;
+            margin-bottom:15px;
+            text-align:center;
+        }
+
+        .resultado p{
+            margin-bottom:10px;
+            color:white;
+        }
+
+        .estado{
+            color:#FFD700;
+            font-weight:bold;
+            font-size:1.2rem;
+        }
+
+        .error{
+            color:#ff6b6b;
+            margin-top:15px;
+            font-weight:bold;
+            display:none;
+        }
+
+        .volver{
+            display:block;
+            margin-top:20px;
+            color:#FFD700;
+            text-decoration:none;
+            font-weight:bold;
+        }
+
+        .volver:hover{
+            color:#FFC107;
+        }
+
+        .pasos{
+            display:flex;
+            justify-content:space-between;
+            gap:8px;
+            margin-top:20px;
+        }
+
+        .paso{
+            flex:1;
+            background:#333;
+            color:#aaa;
+            padding:10px 5px;
+            border-radius:10px;
+            font-size:.8rem;
+            text-align:center;
+        }
+
+        .paso.activo{
+            background:#FFD700;
+            color:#000;
+            font-weight:bold;
+        }
+
+        @media(max-width:600px){
+            .card{
+                padding:22px;
+            }
+
+            .pasos{
+                flex-direction:column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="contenedor">
+
+        <div class="card">
+
+            <img src="img/logo.png" alt="Logo Moto Express">
+
+            <h1>Seguimiento de Pedido</h1>
+
+            <p>Ingresa tu código de pedido para consultar el estado de tu encomienda.</p>
+
+            <input type="text" id="codigoPedido" placeholder="Ejemplo: ME-001">
+
+            <button onclick="buscarPedido()">Consultar estado</button>
+
+            <p id="mensajeError" class="error">No se encontró ningún pedido con ese código.</p>
+
+            <div id="resultado" class="resultado">
+                <h2 id="codigoResultado"></h2>
+
+                <p><strong>Cliente:</strong> <span id="clienteResultado"></span></p>
+                <p><strong>Entrega:</strong> <span id="entregaResultado"></span></p>
+                <p><strong>Tipo:</strong> <span id="tipoResultado"></span></p>
+                <p><strong>Estado:</strong> <span id="estadoResultado" class="estado"></span></p>
+
+                <div class="pasos">
+                    <div id="pasoPendiente" class="paso">Pendiente</div>
+                    <div id="pasoRecogido" class="paso">Recogido</div>
+                    <div id="pasoEnCamino" class="paso">En camino</div>
+                    <div id="pasoEntregado" class="paso">Entregado</div>
+                </div>
+            </div>
+
+            <a href="index.html" class="volver">Volver a la página principal</a>
+
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+        import {
+            getFirestore,
+            collection,
+            getDocs,
+            query,
+            where
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCtyU8MpORmsq5zbrbYpCzJ1K5WT3muhhk",
+            authDomain: "motoexpressriobamba-6b829.firebaseapp.com",
+            projectId: "motoexpressriobamba-6b829",
+            storageBucket: "motoexpressriobamba-6b829.firebasestorage.app",
+            messagingSenderId: "387045012455",
+            appId: "1:387045012455:web:7b8111bf89b5a4b6628342",
+            measurementId: "G-B3TPGM5VWW"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.buscarPedido = async function(){
+
+            const codigo = document.getElementById("codigoPedido").value.trim().toUpperCase();
+
+            const resultado = document.getElementById("resultado");
+            const mensajeError = document.getElementById("mensajeError");
+
+            resultado.style.display = "none";
+            mensajeError.style.display = "none";
+
+            if(codigo === ""){
+                mensajeError.textContent = "Por favor ingresa un código de pedido.";
+                mensajeError.style.display = "block";
+                return;
+            }
+
+            const consulta = query(
+                collection(db, "pedidos"),
+                where("codigo", "==", codigo)
+            );
+
+            const datos = await getDocs(consulta);
+
+            if(datos.empty){
+                mensajeError.textContent = "No se encontró ningún pedido con ese código.";
+                mensajeError.style.display = "block";
+                return;
+            }
+
+            datos.forEach((documento) => {
+
+                const pedido = documento.data();
+
+                document.getElementById("codigoResultado").textContent = `Pedido ${pedido.codigo}`;
+                document.getElementById("clienteResultado").textContent = pedido.nombre || "";
+                document.getElementById("entregaResultado").textContent = pedido.entrega || "";
+                document.getElementById("tipoResultado").textContent = pedido.tipo || "";
+                document.getElementById("estadoResultado").textContent = pedido.estado || "Pendiente";
+
+                actualizarPasos(pedido.estado || "Pendiente");
+
+                resultado.style.display = "block";
+            });
+        }
+
+        function actualizarPasos(estado){
+
+            const pasos = [
+                document.getElementById("pasoPendiente"),
+                document.getElementById("pasoRecogido"),
+                document.getElementById("pasoEnCamino"),
+                document.getElementById("pasoEntregado")
+            ];
+
+            pasos.forEach(paso => paso.classList.remove("activo"));
+
+            if(estado === "Pendiente"){
+                pasos[0].classList.add("activo");
+            }
+
+            if(estado === "Recogido"){
+                pasos[0].classList.add("activo");
+                pasos[1].classList.add("activo");
+            }
+
+            if(estado === "En camino"){
+                pasos[0].classList.add("activo");
+                pasos[1].classList.add("activo");
+                pasos[2].classList.add("activo");
+            }
+
+            if(estado === "Entregado"){
+                pasos[0].classList.add("activo");
+                pasos[1].classList.add("activo");
+                pasos[2].classList.add("activo");
+                pasos[3].classList.add("activo");
+            }
+        }
+    </script>
+
+</body>
+
+</html>
