@@ -39,9 +39,7 @@ nav{
 .logo-box img{
     width:55px;
     height:55px;
-    object-fit:cover;
-    border-radius:50%;
-    border:2px solid #FFD700;
+    object-fit:contain;
 }
 
 nav ul{
