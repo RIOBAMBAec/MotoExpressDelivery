@@ -88,7 +88,8 @@
             margin-top:10px;
         }
 
-        button{
+        button,
+        .btn-whatsapp{
             background:#FFD700;
             color:black;
             border:none;
@@ -97,10 +98,23 @@
             font-weight:bold;
             cursor:pointer;
             margin-left:10px;
+            text-decoration:none;
+            display:inline-block;
+            font-size:14px;
         }
 
-        button:hover{
+        button:hover,
+        .btn-whatsapp:hover{
             background:#FFC107;
+        }
+
+        .btn-whatsapp{
+            background:#25D366;
+            color:white;
+        }
+
+        .btn-whatsapp:hover{
+            background:#1ebe5d;
         }
 
         .estado{
@@ -112,6 +126,14 @@
             color:#aaa;
             font-size:0.9rem;
             margin-bottom:15px;
+        }
+
+        .acciones{
+            margin-top:15px;
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+            align-items:center;
         }
 
         .volver{
@@ -154,10 +176,13 @@
                 padding:15px;
             }
 
-            button{
+            button,
+            .btn-whatsapp{
                 margin-left:0;
                 margin-top:10px;
                 width:100%;
+                text-align:center;
+                box-sizing:border-box;
             }
 
             select{
@@ -169,6 +194,10 @@
                 width:100%;
                 text-align:center;
                 box-sizing:border-box;
+            }
+
+            .acciones{
+                display:block;
             }
         }
     </style>
@@ -235,6 +264,25 @@
 
         let pedidosCargados = false;
 
+        function limpiarTelefono(numero){
+            let telefono = String(numero || "").replace(/\D/g, "");
+
+            if(telefono.startsWith("0")){
+                telefono = "593" + telefono.substring(1);
+            }
+
+            if(!telefono.startsWith("593")){
+                telefono = "593" + telefono;
+            }
+
+            return telefono;
+        }
+
+        function crearMensajeCliente(pedido, codigo){
+            const mensaje = `Hola ${pedido.nombre || ""}, le saluda Moto Express Riobamba Delivery. Le escribimos sobre su pedido ${codigo}.`;
+            return encodeURIComponent(mensaje);
+        }
+
         window.iniciarSesion = function(){
 
             const usuario = document.getElementById("usuario").value;
@@ -291,6 +339,9 @@
                     const id = documento.id;
 
                     const codigoVisual = pedido.codigo || `ME-${String(contador).padStart(3, "0")}`;
+                    const telefonoCliente = limpiarTelefono(pedido.telefono);
+                    const mensajeCliente = crearMensajeCliente(pedido, codigoVisual);
+                    const linkWhatsApp = `https://wa.me/${telefonoCliente}?text=${mensajeCliente}`;
 
                     const div = document.createElement("div");
                     div.classList.add("pedido");
@@ -313,17 +364,23 @@
 
                         <p><strong>Estado actual:</strong> <span class="estado">${pedido.estado || "Pendiente"}</span></p>
 
-                        <select id="estado-${id}">
-                            <option value="Pendiente">Pendiente</option>
-                            <option value="Recogido">Recogido</option>
-                            <option value="En camino">En camino</option>
-                            <option value="Entregado">Entregado</option>
-                            <option value="Cancelado">Cancelado</option>
-                        </select>
+                        <div class="acciones">
+                            <select id="estado-${id}">
+                                <option value="Pendiente">Pendiente</option>
+                                <option value="Recogido">Recogido</option>
+                                <option value="En camino">En camino</option>
+                                <option value="Entregado">Entregado</option>
+                                <option value="Cancelado">Cancelado</option>
+                            </select>
 
-                        <button onclick="actualizarEstado('${id}')">
-                            Actualizar estado
-                        </button>
+                            <button onclick="actualizarEstado('${id}')">
+                                Actualizar estado
+                            </button>
+
+                            <a class="btn-whatsapp" href="${linkWhatsApp}" target="_blank">
+                                💬 Contactar cliente
+                            </a>
+                        </div>
                     `;
 
                     listaPedidos.appendChild(div);
