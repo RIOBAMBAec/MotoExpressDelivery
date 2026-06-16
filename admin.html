@@ -117,6 +117,24 @@
             background:#1ebe5d;
         }
 
+        .btn-en-camino{
+            background:#2196F3;
+            color:white;
+        }
+
+        .btn-en-camino:hover{
+            background:#1976D2;
+        }
+
+        .btn-entregado{
+            background:#4CAF50;
+            color:white;
+        }
+
+        .btn-entregado:hover{
+            background:#388E3C;
+        }
+
         .estado{
             font-weight:bold;
             color:#FFD700;
@@ -283,6 +301,16 @@
             return encodeURIComponent(mensaje);
         }
 
+        function crearMensajeEnCamino(pedido, codigo){
+            const mensaje = `Hola ${pedido.nombre || ""} 👋\n\nTu pedido ${codigo} ya fue recogido y se encuentra en camino 🚚\n\nMoto Express Riobamba Delivery.`;
+            return encodeURIComponent(mensaje);
+        }
+
+        function crearMensajeEntregado(pedido, codigo){
+            const mensaje = `Hola ${pedido.nombre || ""} 👋\n\nTu pedido ${codigo} ha sido entregado correctamente ✅\n\nGracias por confiar en Moto Express Riobamba Delivery 🚚`;
+            return encodeURIComponent(mensaje);
+        }
+
         window.iniciarSesion = function(){
 
             const usuario = document.getElementById("usuario").value;
@@ -340,8 +368,14 @@
 
                     const codigoVisual = pedido.codigo || `ME-${String(contador).padStart(3, "0")}`;
                     const telefonoCliente = limpiarTelefono(pedido.telefono);
+
                     const mensajeCliente = crearMensajeCliente(pedido, codigoVisual);
+                    const mensajeEnCamino = crearMensajeEnCamino(pedido, codigoVisual);
+                    const mensajeEntregado = crearMensajeEntregado(pedido, codigoVisual);
+
                     const linkWhatsApp = `https://wa.me/${telefonoCliente}?text=${mensajeCliente}`;
+                    const linkEnCamino = `https://wa.me/${telefonoCliente}?text=${mensajeEnCamino}`;
+                    const linkEntregado = `https://wa.me/${telefonoCliente}?text=${mensajeEntregado}`;
 
                     const div = document.createElement("div");
                     div.classList.add("pedido");
@@ -379,6 +413,14 @@
 
                             <a class="btn-whatsapp" href="${linkWhatsApp}" target="_blank">
                                 💬 Contactar cliente
+                            </a>
+
+                            <a class="btn-whatsapp btn-en-camino" href="${linkEnCamino}" target="_blank">
+                                🚚 Notificar en camino
+                            </a>
+
+                            <a class="btn-whatsapp btn-entregado" href="${linkEntregado}" target="_blank">
+                                📦 Notificar entregado
                             </a>
                         </div>
                     `;
