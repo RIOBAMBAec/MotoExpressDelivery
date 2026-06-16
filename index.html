@@ -15,7 +15,7 @@
 <body>
 
     <nav>
-        <div class="logo-box">
+        <div class="logo-box" id="logoAdmin">
             <img src="img/logo.png" alt="Logo Moto Express">
             <span>Moto Express</span>
         </div>
@@ -252,6 +252,27 @@
     <a class="whatsapp-flotante" href="https://wa.me/message/NNQ6EXNWLAZ4J1" target="_blank">
         <i class="fab fa-whatsapp"></i>
     </a>
+
+    <script>
+        let contadorLogo = 0;
+        let temporizadorLogo;
+
+        document.getElementById("logoAdmin").addEventListener("click", function(){
+
+            contadorLogo++;
+
+            clearTimeout(temporizadorLogo);
+
+            temporizadorLogo = setTimeout(function(){
+                contadorLogo = 0;
+            }, 1500);
+
+            if(contadorLogo === 3){
+                contadorLogo = 0;
+                window.location.href = "admin.html";
+            }
+        });
+    </script>
 
     <script type="module" src="script.js"></script>
 
