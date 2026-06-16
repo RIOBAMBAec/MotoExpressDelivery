@@ -15,11 +15,15 @@
 <body>
 
     <nav>
-        <div class="logo">Moto Express</div>
+        <div class="logo-box">
+            <img src="img/logo.jpeg" alt="Logo Moto Express">
+            <span>Moto Express</span>
+        </div>
 
         <ul>
             <li><a href="#inicio">Inicio</a></li>
             <li><a href="#servicios">Servicios</a></li>
+            <li><a href="#elegirnos">¿Por qué elegirnos?</a></li>
             <li><a href="#pedidos">Pedidos</a></li>
             <li><a href="#contacto">Contacto</a></li>
         </ul>
@@ -27,10 +31,12 @@
 
     <header id="inicio">
 
+        <img class="logo-principal" src="img/logo.jpeg" alt="Moto Express Riobamba Delivery">
+
         <h1>Moto Express Riobamba Delivery</h1>
 
         <p>
-            Servicio rápido, seguro y confiable para todas tus encomiendas.
+            Servicio rápido, seguro y confiable para todas tus encomiendas en Riobamba.
         </p>
 
         <a href="#pedidos" class="btn">
@@ -85,6 +91,36 @@
 
     </section>
 
+    <section id="elegirnos" class="elegirnos">
+
+        <h2>¿Por qué elegirnos?</h2>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>⚡ Rapidez</h3>
+                <p>Nos movemos rápido para que tus entregas lleguen a tiempo.</p>
+            </div>
+
+            <div class="card">
+                <h3>🔒 Seguridad</h3>
+                <p>Cuidamos tus encomiendas desde la recogida hasta la entrega.</p>
+            </div>
+
+            <div class="card">
+                <h3>📍 Cobertura local</h3>
+                <p>Servicio en Riobamba y alrededores.</p>
+            </div>
+
+            <div class="card">
+                <h3>💬 Atención directa</h3>
+                <p>Comunicación rápida por WhatsApp para coordinar tu pedido.</p>
+            </div>
+
+        </div>
+
+    </section>
+
     <section id="pedidos" class="formulario-section">
 
         <h2>Solicitar Pedido</h2>
@@ -101,19 +137,12 @@
 
             <input type="text" id="tipo" placeholder="Tipo de encomienda / Qué desea que le llevemos" required>
 
-            <textarea id="descripcion" rows="4"
-                placeholder="Descripción adicional"></textarea>
+            <textarea id="descripcion" rows="4" placeholder="Descripción adicional"></textarea>
 
-            <label class="campo-label">
-                📅 Fecha de entrega (Opcional)
-            </label>
-
+            <label class="campo-label">📅 Fecha de entrega (Opcional)</label>
             <input type="date" id="fecha">
 
-            <label class="campo-label">
-              ⏰ Hora de entrega (Opcional)
-            </label>
-
+            <label class="campo-label">⏰ Hora de entrega (Opcional)</label>
             <input type="time" id="hora">
 
             <input type="text" id="receptor" placeholder="Nombre de quien recibe" required>
@@ -124,10 +153,7 @@
                 <option>Transferencia Pichincha</option>
             </select>
 
-            <label class="foto-label">
-                Foto del paquete (Opcional)
-            </label>
-
+            <label class="foto-label">Foto del paquete (Opcional)</label>
             <input type="file" id="foto" accept="image/*">
 
             <button type="submit" class="btn-enviar">
@@ -143,8 +169,23 @@
         <h2>Contacto</h2>
 
         <p>📱 WhatsApp: +593 99 549 4655</p>
+        <p>📍 Cobertura: Riobamba y alrededores</p>
+
+        <div class="footer-redes">
+            <a href="https://wa.me/message/NNQ6EXNWLAZ4J1" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://www.facebook.com/share/14fKpz5kbpM/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.tiktok.com/@motoexpressriobamba?_r=1&_t=ZT-97D6wUOjA0E" target="_blank"><i class="fab fa-tiktok"></i></a>
+        </div>
 
     </section>
+
+    <footer>
+        <p>© 2026 Moto Express Riobamba Delivery | Entregas rápidas y seguras</p>
+    </footer>
+
+    <a class="whatsapp-flotante" href="https://wa.me/message/NNQ6EXNWLAZ4J1" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
 
     <script type="module" src="script.js"></script>
 

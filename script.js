@@ -37,7 +37,6 @@ document.getElementById("pedidoForm").addEventListener("submit", async function(
     try {
 
         const docRef = await addDoc(collection(db, "pedidos"), {
-
             nombre,
             telefono,
             recogida,
@@ -48,14 +47,11 @@ document.getElementById("pedidoForm").addEventListener("submit", async function(
             hora,
             receptor,
             pago,
-
             estado: "Pendiente",
-
             fechaRegistro: new Date()
-
         });
 
-        let mensaje = `🚚 *NUEVO PEDIDO* %0A%0A`;
+        let mensaje = `🚚 *NUEVO PEDIDO - MOTO EXPRESS* %0A%0A`;
 
         mensaje += `🆔 Pedido: ${docRef.id}%0A`;
         mensaje += `👤 Nombre: ${nombre}%0A`;
@@ -63,13 +59,14 @@ document.getElementById("pedidoForm").addEventListener("submit", async function(
         mensaje += `📍 Recogida: ${recogida}%0A`;
         mensaje += `🏠 Entrega: ${entrega}%0A`;
         mensaje += `📦 Tipo: ${tipo}%0A`;
-        mensaje += `📝 Descripción: ${descripcion}%0A`;
+        mensaje += `📝 Descripción: ${descripcion || "Sin descripción"}%0A`;
         mensaje += `📅 Fecha: ${fecha || "No especificada"}%0A`;
         mensaje += `⏰ Hora: ${hora || "No especificada"}%0A`;
         mensaje += `🙋 Recibe: ${receptor}%0A`;
-        mensaje += `💵 Pago: ${pago}%0A`;
+        mensaje += `💵 Pago: ${pago}%0A%0A`;
+        mensaje += `📸 Si adjuntó una foto, por favor enviarla en este chat.`;
 
-        alert("✅ Pedido guardado correctamente.");
+        alert("✅ Pedido guardado correctamente. Se abrirá WhatsApp para enviarlo.");
 
         window.open(
             `https://wa.me/593995494655?text=${mensaje}`,
@@ -81,8 +78,7 @@ document.getElementById("pedidoForm").addEventListener("submit", async function(
     } catch (error) {
 
         console.error(error);
-
-        alert("❌ Error al guardar el pedido.");
+        alert("❌ Error al guardar el pedido. Intente nuevamente.");
 
     }
 
