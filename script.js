@@ -3,7 +3,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import {
     getFirestore,
     collection,
-    addDoc
+    addDoc,
+    getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -18,6 +19,12 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+async function generarCodigoPedido(){
+    const pedidosSnapshot = await getDocs(collection(db, "pedidos"));
+    const numero = pedidosSnapshot.size + 1;
+    return `ME-${String(numero).padStart(3, "0")}`;
+}
 
 document.getElementById("pedidoForm").addEventListener("submit", async function(e) {
 
@@ -36,7 +43,10 @@ document.getElementById("pedidoForm").addEventListener("submit", async function(
 
     try {
 
-        const docRef = await addDoc(collection(db, "pedidos"), {
+        const codigoPedido = await generarCodigoPedido();
+
+        await addDoc(collection(db, "pedidos"), {
+            codigo: codigoPedido,
             nombre,
             telefono,
             recogida,
@@ -53,7 +63,7 @@ document.getElementById("pedidoForm").addEventListener("submit", async function(
 
         let mensaje = `🚚 *NUEVO PEDIDO - MOTO EXPRESS* %0A%0A`;
 
-        mensaje += `🆔 Pedido: ${docRef.id}%0A`;
+        mensaje += `🆔 Código: ${codigoPedido}%0A`;
         mensaje += `👤 Nombre: ${nombre}%0A`;
         mensaje += `📱 Teléfono: ${telefono}%0A`;
         mensaje += `📍 Recogida: ${recogida}%0A`;
@@ -66,7 +76,7 @@ document.getElementById("pedidoForm").addEventListener("submit", async function(
         mensaje += `💵 Pago: ${pago}%0A%0A`;
         mensaje += `📸 Si adjuntó una foto, por favor enviarla en este chat.`;
 
-        alert("✅ Pedido guardado correctamente. Se abrirá WhatsApp para enviarlo.");
+        alert(`✅ Pedido guardado correctamente. Código: ${codigoPedido}`);
 
         window.open(
             `https://wa.me/593995494655?text=${mensaje}`,
