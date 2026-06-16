@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - Moto Express</title>
+
+    <style>
+        body{
+            margin:0;
+            font-family:Arial, sans-serif;
+            background:#111;
+            color:white;
+            padding:30px;
+        }
+
+        h1{
+            color:#FFD700;
+            text-align:center;
+        }
+
+        .pedido{
+            background:#1c1c1c;
+            border:1px solid #333;
+            border-radius:15px;
+            padding:20px;
+            margin:20px auto;
+            max-width:900px;
+        }
+
+        .pedido h2{
+            color:#FFC107;
+        }
+
+        .pedido p{
+            margin:8px 0;
+        }
+
+        select{
+            padding:10px;
+            border-radius:8px;
+            border:none;
+            margin-top:10px;
+        }
+
+        button{
+            background:#FFD700;
+            color:black;
+            border:none;
+            padding:10px 18px;
+            border-radius:8px;
+            font-weight:bold;
+            cursor:pointer;
+            margin-left:10px;
+        }
+
+        button:hover{
+            background:#FFC107;
+        }
+
+        .estado{
+            font-weight:bold;
+            color:#FFD700;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Panel Administrativo - Moto Express</h1>
+
+    <div id="listaPedidos">
+        <p>Cargando pedidos...</p>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+        import {
+            getFirestore,
+            collection,
+            onSnapshot,
+            doc,
+            updateDoc
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCtyU8MpORmsq5zbrbYpCzJ1K5WT3muhhk",
+            authDomain: "motoexpressriobamba-6b829.firebaseapp.com",
+            projectId: "motoexpressriobamba-6b829",
+            storageBucket: "motoexpressriobamba-6b829.firebasestorage.app",
+            messagingSenderId: "387045012455",
+            appId: "1:387045012455:web:7b8111bf89b5a4b6628342",
+            measurementId: "G-B3TPGM5VWW"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const listaPedidos = document.getElementById("listaPedidos");
+
+        onSnapshot(collection(db, "pedidos"), (snapshot) => {
+
+            listaPedidos.innerHTML = "";
+
+            if(snapshot.empty){
+                listaPedidos.innerHTML = "<p>No hay pedidos registrados.</p>";
+                return;
+            }
+
+            snapshot.forEach((documento) => {
+
+                const pedido = documento.data();
+                const id = documento.id;
+
+                const div = document.createElement("div");
+                div.classList.add("pedido");
+
+                div.innerHTML = `
+                    <h2>Pedido: ${id}</h2>
+
+                    <p><strong>Cliente:</strong> ${pedido.nombre || ""}</p>
+                    <p><strong>Teléfono:</strong> ${pedido.telefono || ""}</p>
+                    <p><strong>Recogida:</strong> ${pedido.recogida || ""}</p>
+                    <p><strong>Entrega:</strong> ${pedido.entrega || ""}</p>
+                    <p><strong>Tipo:</strong> ${pedido.tipo || ""}</p>
+                    <p><strong>Descripción:</strong> ${pedido.descripcion || "Sin descripción"}</p>
+                    <p><strong>Fecha:</strong> ${pedido.fecha || "No especificada"}</p>
+                    <p><strong>Hora:</strong> ${pedido.hora || "No especificada"}</p>
+                    <p><strong>Recibe:</strong> ${pedido.receptor || ""}</p>
+                    <p><strong>Pago:</strong> ${pedido.pago || ""}</p>
+
+                    <p><strong>Estado actual:</strong> <span class="estado">${pedido.estado || "Pendiente"}</span></p>
+
+                    <select id="estado-${id}">
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Recogido">Recogido</option>
+                        <option value="En camino">En camino</option>
+                        <option value="Entregado">Entregado</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
+
+                    <button onclick="actualizarEstado('${id}')">
+                        Actualizar estado
+                    </button>
+                `;
+
+                listaPedidos.appendChild(div);
+            });
+        });
+
+        window.actualizarEstado = async function(id){
+
+            const nuevoEstado = document.getElementById(`estado-${id}`).value;
+
+            await updateDoc(doc(db, "pedidos", id), {
+                estado: nuevoEstado
+            });
+
+            alert("Estado actualizado correctamente");
+        }
+    </script>
+
+</body>
+</html>
