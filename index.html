@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moto Express Riobamba Delivery</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">Moto Express</div>
+
+        <ul>
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#servicios">Servicios</a></li>
+            <li><a href="#pedidos">Pedidos</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+        </ul>
+    </nav>
+
+    <header id="inicio">
+
+        <h1>Moto Express Riobamba Delivery</h1>
+
+        <p>
+            Servicio rápido, seguro y confiable para todas tus encomiendas.
+        </p>
+
+        <a href="#pedidos" class="btn">
+            Solicitar Envío
+        </a>
+
+        <div class="sociales">
+
+            <a href="https://wa.me/message/NNQ6EXNWLAZ4J1" target="_blank">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+
+            <a href="https://www.facebook.com/share/14fKpz5kbpM/" target="_blank">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+
+            <a href="https://www.tiktok.com/@motoexpressriobamba?_r=1&_t=ZT-97D6wUOjA0E" target="_blank">
+                <i class="fab fa-tiktok"></i>
+            </a>
+
+        </div>
+
+    </header>
+
+    <section id="servicios" class="servicios">
+
+        <h2>Nuestros Servicios</h2>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>📦 Encomiendas</h3>
+                <p>Transporte seguro de paquetes y documentos.</p>
+            </div>
+
+            <div class="card">
+                <h3>🚚 Entregas Express</h3>
+                <p>Entregas rápidas dentro de la ciudad.</p>
+            </div>
+
+            <div class="card">
+                <h3>🛒 Compras y Mandados</h3>
+                <p>Realizamos compras y entregas a domicilio.</p>
+            </div>
+
+            <div class="card">
+                <h3>🏢 Servicio Empresarial</h3>
+                <p>Mensajería para negocios y empresas.</p>
+            </div>
+
+        </div>
+
+    </section>
+
+    <section id="pedidos" class="formulario-section">
+
+        <h2>Solicitar Pedido</h2>
+
+        <form id="pedidoForm">
+
+            <input type="text" id="nombre" placeholder="Nombre y Apellido" required>
+
+            <input type="tel" id="telefono" placeholder="Teléfono" required>
+
+            <input type="text" id="recogida" placeholder="Dirección de Recogida" required>
+
+            <input type="text" id="entrega" placeholder="Dirección de Entrega" required>
+
+            <input type="text" id="tipo" placeholder="Tipo de encomienda / Qué desea que le llevemos" required>
+
+            <textarea id="descripcion" rows="4"
+                placeholder="Descripción adicional"></textarea>
+
+            <label class="campo-label">
+                📅 Fecha de entrega (Opcional)
+            </label>
+
+            <input type="date" id="fecha">
+
+            <label class="campo-label">
+              ⏰ Hora de entrega (Opcional)
+            </label>
+
+            <input type="time" id="hora">
+
+            <input type="text" id="receptor" placeholder="Nombre de quien recibe" required>
+
+            <select id="pago" required>
+                <option value="">Método de Pago</option>
+                <option>Efectivo</option>
+                <option>Transferencia Pichincha</option>
+            </select>
+
+            <label class="foto-label">
+                Foto del paquete (Opcional)
+            </label>
+
+            <input type="file" id="foto" accept="image/*">
+
+            <button type="submit" class="btn-enviar">
+                Enviar Pedido por WhatsApp
+            </button>
+
+        </form>
+
+    </section>
+
+    <section id="contacto" class="contacto">
+
+        <h2>Contacto</h2>
+
+        <p>📱 WhatsApp: +593 99 549 4655</p>
+
+    </section>
+
+    <script type="module" src="script.js"></script>
+
+</body>
+
+</html>
