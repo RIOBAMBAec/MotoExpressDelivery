@@ -21,6 +21,48 @@
             margin-bottom:30px;
         }
 
+        .login-box{
+            max-width:420px;
+            margin:80px auto;
+            background:#1c1c1c;
+            border:1px solid #333;
+            border-radius:18px;
+            padding:30px;
+            text-align:center;
+        }
+
+        .login-box h2{
+            color:#FFD700;
+            margin-bottom:20px;
+        }
+
+        .login-box input{
+            width:100%;
+            padding:14px;
+            margin-bottom:15px;
+            border:none;
+            border-radius:10px;
+            font-size:16px;
+            box-sizing:border-box;
+        }
+
+        .login-box button{
+            width:100%;
+            margin:0;
+            padding:14px;
+            font-size:16px;
+        }
+
+        .error{
+            color:#ff6b6b;
+            margin-top:15px;
+            font-weight:bold;
+        }
+
+        .oculto{
+            display:none;
+        }
+
         .pedido{
             background:#1c1c1c;
             border:1px solid #333;
@@ -88,6 +130,25 @@
             background:#FFC107;
         }
 
+        .cerrar-sesion{
+            display:block;
+            width:max-content;
+            margin:0 auto 30px;
+            background:#333;
+            color:white;
+            padding:12px 20px;
+            border-radius:10px;
+            text-decoration:none;
+            font-weight:bold;
+            border:1px solid #FFD700;
+            cursor:pointer;
+        }
+
+        .cerrar-sesion:hover{
+            background:#FFD700;
+            color:black;
+        }
+
         @media(max-width:768px){
             body{
                 padding:15px;
@@ -102,18 +163,42 @@
             select{
                 width:100%;
             }
+
+            .volver,
+            .cerrar-sesion{
+                width:100%;
+                text-align:center;
+                box-sizing:border-box;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <h1>Panel Administrativo - Moto Express</h1>
+    <div id="loginBox" class="login-box">
+        <h2>Acceso Administrador</h2>
 
-    <a class="volver" href="index.html">Volver a la página principal</a>
+        <input type="text" id="usuario" placeholder="Usuario">
+        <input type="password" id="password" placeholder="Contraseña">
 
-    <div id="listaPedidos">
-        <p>Cargando pedidos...</p>
+        <button onclick="iniciarSesion()">Ingresar</button>
+
+        <p id="errorLogin" class="error"></p>
+    </div>
+
+    <div id="panelAdmin" class="oculto">
+
+        <h1>Panel Administrativo - Moto Express</h1>
+
+        <a class="volver" href="index.html">Volver a la página principal</a>
+
+        <button class="cerrar-sesion" onclick="cerrarSesion()">Cerrar sesión</button>
+
+        <div id="listaPedidos">
+            <p>Cargando pedidos...</p>
+        </div>
+
     </div>
 
     <script type="module">
@@ -140,65 +225,113 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        const loginBox = document.getElementById("loginBox");
+        const panelAdmin = document.getElementById("panelAdmin");
         const listaPedidos = document.getElementById("listaPedidos");
+        const errorLogin = document.getElementById("errorLogin");
 
-        onSnapshot(collection(db, "pedidos"), (snapshot) => {
+        const ADMIN_USER = "admin";
+        const ADMIN_PASS = "MotoExpress2026";
 
-            listaPedidos.innerHTML = "";
+        let pedidosCargados = false;
 
-            if(snapshot.empty){
-                listaPedidos.innerHTML = "<p>No hay pedidos registrados.</p>";
-                return;
+        window.iniciarSesion = function(){
+
+            const usuario = document.getElementById("usuario").value;
+            const password = document.getElementById("password").value;
+
+            if(usuario === ADMIN_USER && password === ADMIN_PASS){
+
+                sessionStorage.setItem("adminLogueado", "true");
+
+                loginBox.classList.add("oculto");
+                panelAdmin.classList.remove("oculto");
+
+                if(!pedidosCargados){
+                    cargarPedidos();
+                    pedidosCargados = true;
+                }
+
+            }else{
+                errorLogin.textContent = "Usuario o contraseña incorrectos.";
             }
+        }
 
-            let contador = 1;
+        window.cerrarSesion = function(){
+            sessionStorage.removeItem("adminLogueado");
+            location.reload();
+        }
 
-            snapshot.forEach((documento) => {
+        if(sessionStorage.getItem("adminLogueado") === "true"){
+            loginBox.classList.add("oculto");
+            panelAdmin.classList.remove("oculto");
 
-                const pedido = documento.data();
-                const id = documento.id;
+            if(!pedidosCargados){
+                cargarPedidos();
+                pedidosCargados = true;
+            }
+        }
 
-                const codigoVisual = pedido.codigo || `ME-${String(contador).padStart(3, "0")}`;
+        function cargarPedidos(){
 
-                const div = document.createElement("div");
-                div.classList.add("pedido");
+            onSnapshot(collection(db, "pedidos"), (snapshot) => {
 
-                div.innerHTML = `
-                    <h2>Pedido ${codigoVisual}</h2>
+                listaPedidos.innerHTML = "";
 
-                    <p class="codigo-real"><strong>Código interno:</strong> ${id}</p>
+                if(snapshot.empty){
+                    listaPedidos.innerHTML = "<p>No hay pedidos registrados.</p>";
+                    return;
+                }
 
-                    <p><strong>Cliente:</strong> ${pedido.nombre || ""}</p>
-                    <p><strong>Teléfono:</strong> ${pedido.telefono || ""}</p>
-                    <p><strong>Recogida:</strong> ${pedido.recogida || ""}</p>
-                    <p><strong>Entrega:</strong> ${pedido.entrega || ""}</p>
-                    <p><strong>Tipo:</strong> ${pedido.tipo || ""}</p>
-                    <p><strong>Descripción:</strong> ${pedido.descripcion || "Sin descripción"}</p>
-                    <p><strong>Fecha:</strong> ${pedido.fecha || "No especificada"}</p>
-                    <p><strong>Hora:</strong> ${pedido.hora || "No especificada"}</p>
-                    <p><strong>Recibe:</strong> ${pedido.receptor || ""}</p>
-                    <p><strong>Pago:</strong> ${pedido.pago || ""}</p>
+                let contador = 1;
 
-                    <p><strong>Estado actual:</strong> <span class="estado">${pedido.estado || "Pendiente"}</span></p>
+                snapshot.forEach((documento) => {
 
-                    <select id="estado-${id}">
-                        <option value="Pendiente">Pendiente</option>
-                        <option value="Recogido">Recogido</option>
-                        <option value="En camino">En camino</option>
-                        <option value="Entregado">Entregado</option>
-                        <option value="Cancelado">Cancelado</option>
-                    </select>
+                    const pedido = documento.data();
+                    const id = documento.id;
 
-                    <button onclick="actualizarEstado('${id}')">
-                        Actualizar estado
-                    </button>
-                `;
+                    const codigoVisual = pedido.codigo || `ME-${String(contador).padStart(3, "0")}`;
 
-                listaPedidos.appendChild(div);
+                    const div = document.createElement("div");
+                    div.classList.add("pedido");
 
-                contador++;
+                    div.innerHTML = `
+                        <h2>Pedido ${codigoVisual}</h2>
+
+                        <p class="codigo-real"><strong>Código interno:</strong> ${id}</p>
+
+                        <p><strong>Cliente:</strong> ${pedido.nombre || ""}</p>
+                        <p><strong>Teléfono:</strong> ${pedido.telefono || ""}</p>
+                        <p><strong>Recogida:</strong> ${pedido.recogida || ""}</p>
+                        <p><strong>Entrega:</strong> ${pedido.entrega || ""}</p>
+                        <p><strong>Tipo:</strong> ${pedido.tipo || ""}</p>
+                        <p><strong>Descripción:</strong> ${pedido.descripcion || "Sin descripción"}</p>
+                        <p><strong>Fecha:</strong> ${pedido.fecha || "No especificada"}</p>
+                        <p><strong>Hora:</strong> ${pedido.hora || "No especificada"}</p>
+                        <p><strong>Recibe:</strong> ${pedido.receptor || ""}</p>
+                        <p><strong>Pago:</strong> ${pedido.pago || ""}</p>
+
+                        <p><strong>Estado actual:</strong> <span class="estado">${pedido.estado || "Pendiente"}</span></p>
+
+                        <select id="estado-${id}">
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Recogido">Recogido</option>
+                            <option value="En camino">En camino</option>
+                            <option value="Entregado">Entregado</option>
+                            <option value="Cancelado">Cancelado</option>
+                        </select>
+
+                        <button onclick="actualizarEstado('${id}')">
+                            Actualizar estado
+                        </button>
+                    `;
+
+                    listaPedidos.appendChild(div);
+
+                    contador++;
+                });
             });
-        });
+        }
 
         window.actualizarEstado = async function(id){
 
